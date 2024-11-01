@@ -62,7 +62,8 @@ uint8_t VL53L4CD::VL53L4CD_RdWord(uint16_t dev, uint16_t RegisterAdress, uint16_
   uint8_t status = 0;
   uint8_t buffer[2] = {0, 0};
 
-  status = VL53L4CD_I2CRead(dev, RegisterAdress, buffer, 2);
+  status = VL53L4CD_I2CRead(dev, RegisterAdress, buffer, 2); 
+
   if (!status) {
     *value = (buffer[0] << 8) + buffer[1];
   }
@@ -117,28 +118,27 @@ uint8_t VL53L4CD::VL53L4CD_I2CRead(uint8_t DeviceAddr, uint16_t RegisterAddress,
   int status = 0;
   uint8_t buffer[2];
 
+ 
   // Loop until the port is transmitted correctly
-  do {
-    dev_i2c->beginTransmission((uint8_t)((DeviceAddr >> 1) & 0x7F));
 
-    // Target register address for transfer
-    buffer[0] = (uint8_t)(RegisterAddress >> 8);
-    buffer[1] = (uint8_t)(RegisterAddress & 0xFF);
-    dev_i2c->write(buffer, 2);
+  dev_i2c->beginTransmission((uint8_t)((DeviceAddr >> 1) & 0x7F));
 
-    status = dev_i2c->endTransmission(false);
+  // Target register address for transfer
+  buffer[0] = (uint8_t)(RegisterAddress >> 8);
+  buffer[1] = (uint8_t)(RegisterAddress & 0xFF);
+  dev_i2c->write(buffer, 2);
 
-    // Fix for some STM32 boards
-    // Reinitialize the i2c bus with the default parameters
+  status = dev_i2c->endTransmission(false);
+
+  // Fix for some STM32 boards
+  // Reinitialize the i2c bus with the default parameters
 #ifdef ARDUINO_ARCH_STM32
-    if (status) {
-      dev_i2c->end();
-      dev_i2c->begin();
-    }
+  if (status) {
+    dev_i2c->end();
+    dev_i2c->begin();
+  }
 #endif
-    // End of fix
-
-  } while (status != 0);
+  // End of fix
 
   uint32_t i = 0;
   if (size > DEFAULT_I2C_BUFFER_LEN) {
@@ -161,7 +161,7 @@ uint8_t VL53L4CD::VL53L4CD_I2CRead(uint8_t DeviceAddr, uint16_t RegisterAddress,
     }
   }
 
-  return i != size;
+  return status;
 }
 
 uint8_t VL53L4CD::VL53L4CD_I2CWrite(uint8_t DeviceAddr, uint16_t RegisterAddress, uint8_t *p_values, uint32_t size)

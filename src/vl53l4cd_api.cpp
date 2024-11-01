@@ -174,8 +174,9 @@ VL53L4CD_ERROR VL53L4CD::VL53L4CD_GetSensorId(
   uint16_t *p_id)
 {
   VL53L4CD_ERROR status = VL53L4CD_ERROR_NONE;
+  
+  status |= VL53L4CD_RdWord(dev, VL53L4CD_IDENTIFICATION_MODEL_ID, p_id); // Gets stuck here!
 
-  status |= VL53L4CD_RdWord(dev, VL53L4CD_IDENTIFICATION_MODEL_ID, p_id);
   return status;
 }
 

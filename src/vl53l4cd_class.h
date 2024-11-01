@@ -128,12 +128,15 @@ class VL53L4CD {
         return VL53L4CD_ERROR_TIMEOUT;
       }
 
-      status = VL53L4CD_GetSensorId(&sensor_id);
+   
+      status = VL53L4CD_GetSensorId(&sensor_id); // Gets stuck here!
+
 
       if (status != VL53L4CD_ERROR_NONE || (sensor_id != 0xebaa)) {
         return VL53L4CD_ERROR_TIMEOUT;
       }
 
+    
       status = VL53L4CD_SensorInit();
 
       if (status != VL53L4CD_ERROR_NONE) {
